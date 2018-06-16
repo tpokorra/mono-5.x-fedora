@@ -45,6 +45,7 @@ BuildRequires:  libgdiplus-devel >= 2.10
 BuildRequires:  pkgconfig
 BuildRequires:  valgrind-devel
 BuildRequires:  zlib-devel
+BuildRequires:  perl-Getopt-Long
 
 # Yes, mono actually depends on itself, because
 # we deleted the bootstrapping binaries. If you
@@ -342,7 +343,7 @@ not install anything from outside the mono source (XSP, mono-basic, etc.).
 sed -i 's|$mono_libdir/||g' data/config.in
 
 # Remove prebuilt binaries
-find . -name "*.dll" -not -path "./mcs/class/lib/monolite-linux/*" -not -path "./external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.6.0/*" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Net.Http.dll" -net -path "./external/binary-reference-assemblies/v4.7.1/System.Numerics.dll" -print -delete
+find . -name "*.dll" -not -path "./mcs/class/lib/monolite-linux/*" -not -path "./external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.6.0/*" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Net.Http.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Numerics.dll" -print -delete
 find . -name "*.exe" -not -path "./mcs/class/lib/monolite-linux/*" -not -path "./external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.6.0/*" -print -delete
 
 %if 0%{bootstrap}
@@ -464,6 +465,8 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %{_bindir}/gacutil2
 %{_bindir}/csc
 %{_monodir}/4.5/csc.*
+%{_bindir}/csc-dim
+%{_monodir}/4.5/dim/csc.*
 %{_bindir}/csi
 %{_monodir}/4.5/csi.*
 %{_bindir}/mcs
@@ -535,8 +538,6 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %config (noreplace) %{_sysconfdir}/mono/4.5/web.config
 %dir %{_sysconfdir}/mono/4.0
 %mono_bin ccrewrite
-%{_monodir}/4.0-api
-%{_monodir}/4.5-api
 %{_monodir}/4.5/mscorlib.dll
 %{_monodir}/4.5/mscorlib.dll.mdb
 %gac_dll Microsoft.CSharp
@@ -595,7 +596,8 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %{_monodir}/4.5/mono-api-info.*
 %{_bindir}/mono-api-html
 %{_monodir}/4.5/mono-api-html.*
-%{_monodir}/4.5/linkeranalyzer.*
+%{_monodir}/4.5/illinkanalyzer.*
+%{_bindir}/illinkanalyzer
 %mono_bin mono-symbolicate
 %gac_dll SMDiagnostics
 %mono_bin xbuild
@@ -649,6 +651,7 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %{_mandir}/man1/mono-cil-strip.1.gz
 %{_mandir}/man1/monodis.1.gz
 %{_mandir}/man1/mono-profilers.1.gz
+%{_mandir}/man1/illinkanalyzer.1.gz
 %{_datadir}/mono-2.0/mono/cil/cil-opcodes.xml
 %{_datadir}/mono-2.0/mono/profiler/mono-profiler-log.suppression
 %{_datadir}/mono-2.0/mono/profiler/mono-profiler-coverage.suppression
