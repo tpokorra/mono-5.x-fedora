@@ -16,7 +16,7 @@
 %global xamarinrelease 226
 Name:           mono
 Version:        5.12.0
-Release:        2%{?dist}
+Release:        1%{?dist}
 Summary:        Cross-platform, Open Source, .NET development framework
 
 Group:          Development/Languages
@@ -878,6 +878,9 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %files complete
 
 %changelog
+* Sat Jun 16 2018 Timotheus Pokorra <tp@tbits.net> - 5.12.0-1
+- update to 5.12.0.226
+
 * Wed Mar 28 2018 Claudio Rodrigo Pereyra Diaz <elsupergomez@fedoraproject.org> - 5.10.1-2
 - update to 5.10.1.32
 - remove mono-4.8.0.520-glibc-ucontext.patch applied upstream
