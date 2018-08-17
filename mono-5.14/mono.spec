@@ -343,8 +343,8 @@ not install anything from outside the mono source (XSP, mono-basic, etc.).
 sed -i 's|$mono_libdir/||g' data/config.in
 
 # Remove prebuilt binaries
-find . -name "*.dll" -not -path "./mcs/class/lib/monolite-linux/*" -not -path "./external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.6.0/*" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Net.Http.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Numerics.dll" -print -delete
-find . -name "*.exe" -not -path "./mcs/class/lib/monolite-linux/*" -not -path "./external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.6.0/*" -print -delete
+find . -name "*.dll" -not -path "./mcs/class/lib/monolite-linux/*" -not -path "./external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.7.0/*" -not -path "./external/binary-reference-assemblies/v4.7.1/System.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Core.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Web.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Xml.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Configuration.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Net.Http.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.ServiceModel.Activation.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Numerics.dll" -not -path "./external/binary-reference-assemblies/v4.6/mscorlib.dll" -not -path "./external/binary-reference-assemblies/v4.6/System.dll" -print -delete
+find . -name "*.exe" -not -path "./mcs/class/lib/monolite-linux/*" -not -path "./external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.7.0/*" -print -delete
 
 %if 0%{bootstrap}
 # for bootstrap, keep monolite. Mono 2.10 is too old to compile Mono 4.0
@@ -653,7 +653,6 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %{_mandir}/man1/mono-profilers.1.gz
 %{_mandir}/man1/illinkanalyzer.1.gz
 %{_datadir}/mono-2.0/mono/cil/cil-opcodes.xml
-%{_datadir}/mono-2.0/mono/profiler/mono-profiler-log.suppression
 %{_datadir}/mono-2.0/mono/profiler/mono-profiler-coverage.suppression
 %{_mandir}/man1/monolinker.1.gz
 %{_mandir}/man1/mono-shlib-cop.1.gz
