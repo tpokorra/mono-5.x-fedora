@@ -9,13 +9,19 @@
 %global _monodir %{_prefix}/lib/mono
 %global _monogacdir %{_monodir}/gac
 %endif
+%if 0%{?el7}
+# somehow _monodir and _monogacdir is missing in 7.5
+%global _monodir %{_prefix}/lib/mono
+%global _monogacdir %{_monodir}/gac
+%endif
+
 %if 0%{?rhel}%{?el6}%{?el7} || 0%{?bootstrap}
 # to resolve: "ERROR: No build ID note found"
 %undefine _missing_build_ids_terminate_build
 %endif
-%global xamarinrelease 177
+%global xamarinrelease 179
 Name:           mono
-Version:        5.14.0
+Version:        5.16.0
 Release:        1%{?dist}
 Summary:        Cross-platform, Open Source, .NET development framework
 
@@ -343,8 +349,8 @@ not install anything from outside the mono source (XSP, mono-basic, etc.).
 sed -i 's|$mono_libdir/||g' data/config.in
 
 # Remove prebuilt binaries
-find . -name "*.dll" -not -path "./mcs/class/lib/monolite-linux/*" -not -path "./external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.7.0/*" -not -path "./external/binary-reference-assemblies/v4.7.1/System.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Core.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Web.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Xml.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Configuration.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Net.Http.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.ServiceModel.Activation.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Numerics.dll" -not -path "./external/binary-reference-assemblies/v4.6/mscorlib.dll" -not -path "./external/binary-reference-assemblies/v4.6/System.dll" -print -delete
-find . -name "*.exe" -not -path "./mcs/class/lib/monolite-linux/*" -not -path "./external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.7.0/*" -print -delete
+find . -name "*.dll" -not -path "./mcs/class/lib/monolite-linux/*" -not -path "./external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.8.2/*" -not -path "./external/binary-reference-assemblies/v4.7.1/System.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Core.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Web.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Xml.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Configuration.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Net.Http.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.ServiceModel.Activation.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Numerics.dll" -not -path "./external/binary-reference-assemblies/v4.6/mscorlib.dll" -not -path "./external/binary-reference-assemblies/v4.6/System.dll" -print -delete
+find . -name "*.exe" -not -path "./mcs/class/lib/monolite-linux/*" -not -path "./external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.8.2/*" -print -delete
 
 %if 0%{bootstrap}
 # for bootstrap, keep monolite. Mono 2.10 is too old to compile Mono 4.0
@@ -493,6 +499,7 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %{_mandir}/man1/lc.1.gz
 %{_mandir}/man1/mprof-report.1.gz
 %{_libdir}/libMonoPosixHelper.so*
+%{_libdir}/libmono-system-native.so*
 %dir %{_monodir}
 %dir %{_monodir}/4.5
 %dir %{_monodir}/4.5/Facades
@@ -877,6 +884,9 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %files complete
 
 %changelog
+* Tue Oct 16 2018 Timotheus Pokorra <tp@tbits.net> - 5.16.0-1
+- update to 5.16.0.179
+
 * Thu Aug 16 2018 Timotheus Pokorra <tp@tbits.net> - 5.14.0-1
 - update to 5.14.0.177
 
