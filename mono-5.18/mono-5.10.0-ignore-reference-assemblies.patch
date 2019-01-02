@@ -1,6 +1,6 @@
---- a/mcs/class/reference-assemblies/Makefile	2018-03-02 21:45:56.406629435 +0100
-+++ b/mcs/class/reference-assemblies/Makefile	2018-03-02 21:47:35.919935188 +0100
-@@ -10,24 +10,12 @@
+--- a/mcs/class/reference-assemblies/Makefile	2019-01-02 10:25:41.011999700 +0100
++++ b/mcs/class/reference-assemblies/Makefile	2019-01-02 10:27:20.591632515 +0100
+@@ -10,25 +10,11 @@
  	$(MAKE) -C ../../../external/binary-reference-assemblies CSC="MONO_PATH=$(abspath $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)) $(INTERNAL_CSC)"
  
  install-local:
@@ -22,18 +22,18 @@
 -	$(MKINSTALLDIRS) $(PROFILE_DIR)/4.6.2-api/Facades
 -	$(MKINSTALLDIRS) $(PROFILE_DIR)/4.7-api/Facades
 -	$(MKINSTALLDIRS) $(PROFILE_DIR)/4.7.1-api/Facades
+-	$(MKINSTALLDIRS) $(PROFILE_DIR)/4.7.2-api/Facades
 +	$(MKINSTALLDIRS) $(PROFILE_DIR)/4.5
 +	ln -sf 4.5 $(PROFILE_DIR)/4.7-api
 +	ln -sf 4.5 $(PROFILE_DIR)/4.6-api
 +	ln -sf 4.5 $(PROFILE_DIR)/4.5-api
 +	ln -sf 4.5 $(PROFILE_DIR)/4.0-api
-+
  
  	$(INSTALL_LIB) ../../../external/binary-reference-assemblies/v2.0/*.dll $(PROFILE_DIR)/2.0-api
  	$(INSTALL_LIB) ../../../external/binary-reference-assemblies/v3.5/*.dll $(PROFILE_DIR)/3.5-api
-@@ -62,13 +50,6 @@
- 	$(INSTALL_LIB) ../../../external/binary-reference-assemblies/mono/*.dll $(PROFILE_DIR)/4.7.1-api
- 	rm -f $(PROFILE_DIR)/4.7.1-api/ICSharpCode.SharpZipLib.dll
+@@ -67,13 +53,6 @@
+ 	$(INSTALL_LIB) ../../../external/binary-reference-assemblies/mono/*.dll $(PROFILE_DIR)/4.7.2-api
+ 	rm -f $(PROFILE_DIR)/4.7.2-api/ICSharpCode.SharpZipLib.dll
  
 -	# Unfortunately, a few programs (most notably NUnit and FSharp) have hardcoded checks for <prefix>/lib/mono/4.0/mscorlib.dll or Mono.Posix.dll,
 -	# so we need to place something there or those tools break. We decided to symlink to the reference assembly for now.
@@ -43,8 +43,8 @@
 -	ln -sf ../4.0-api/Mono.Posix.dll $(PROFILE_DIR)/4.0/Mono.Posix.dll
 -
  DISTFILES =	\
+ 	$(wildcard ../../../external/binary-reference-assemblies/v4.7.2/Facades/*.dll)	\
  	$(wildcard ../../../external/binary-reference-assemblies/v4.7.1/Facades/*.dll)	\
- 	$(wildcard ../../../external/binary-reference-assemblies/v4.7/Facades/*.dll)	\
 --- a/mcs/Makefile	2018-03-03 06:32:13.642690150 +0100
 +++ b/mcs/Makefile	2018-03-03 06:32:54.699643624 +0100
 @@ -40,7 +40,7 @@

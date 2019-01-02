@@ -19,9 +19,9 @@
 # to resolve: "ERROR: No build ID note found"
 %undefine _missing_build_ids_terminate_build
 %endif
-%global xamarinrelease 179
+%global xamarinrelease 225
 Name:           mono
-Version:        5.16.0
+Version:        5.18.0
 Release:        1%{?dist}
 Summary:        Cross-platform, Open Source, .NET development framework
 
@@ -349,7 +349,7 @@ not install anything from outside the mono source (XSP, mono-basic, etc.).
 sed -i 's|$mono_libdir/||g' data/config.in
 
 # Remove prebuilt binaries
-find . -name "*.dll" -not -path "./mcs/class/lib/monolite-linux/*" -not -path "./external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.8.2/*" -not -path "./external/binary-reference-assemblies/v4.7.1/System.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Core.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Web.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Xml.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Configuration.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Net.Http.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.ServiceModel.Activation.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Numerics.dll" -not -path "./external/binary-reference-assemblies/v4.6/mscorlib.dll" -not -path "./external/binary-reference-assemblies/v4.6/System.dll" -print -delete
+find . -name "*.dll" -not -path "./mcs/class/lib/monolite-linux/*" -not -path "./external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.8.2/*" -not -path "./external/binary-reference-assemblies/v4.7.1/System.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Core.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Web.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Xml.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Configuration.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Net.Http.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.ServiceModel.Activation.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Numerics.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/mscorlib.dll" -not -path "./external/binary-reference-assemblies/v4.6/mscorlib.dll" -not -path "./external/binary-reference-assemblies/v4.6/System.dll" -print -delete
 find . -name "*.exe" -not -path "./mcs/class/lib/monolite-linux/*" -not -path "./external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.8.2/*" -print -delete
 
 %if 0%{bootstrap}
@@ -477,6 +477,7 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %{_monodir}/4.5/csi.*
 %{_bindir}/mcs
 %{_monodir}/4.5/mcs.*
+%{_monodir}/4.5/mono-api-diff.*
 %{_bindir}/vbc
 %{_monodir}/4.5/vbc.*
 %mono_bin mozroots
@@ -660,6 +661,7 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %{_mandir}/man1/mono-profilers.1.gz
 %{_mandir}/man1/illinkanalyzer.1.gz
 %{_datadir}/mono-2.0/mono/cil/cil-opcodes.xml
+%{_datadir}/mono-2.0/mono/eglib/eglib-config.h
 %{_datadir}/mono-2.0/mono/profiler/mono-profiler-coverage.suppression
 %{_mandir}/man1/monolinker.1.gz
 %{_mandir}/man1/mono-shlib-cop.1.gz
@@ -884,6 +886,9 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %files complete
 
 %changelog
+* Wed Jan 02 2019 Timotheus Pokorra <tp@tbits.net> - 5.18.0-1
+- update to 5.18.0.225
+
 * Tue Oct 16 2018 Timotheus Pokorra <tp@tbits.net> - 5.16.0-1
 - update to 5.16.0.179
 
