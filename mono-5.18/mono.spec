@@ -19,10 +19,10 @@
 # to resolve: "ERROR: No build ID note found"
 %undefine _missing_build_ids_terminate_build
 %endif
-%global xamarinrelease 225
+%global xamarinrelease 240
 Name:           mono
 Version:        5.18.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Cross-platform, Open Source, .NET development framework
 
 Group:          Development/Languages
@@ -886,6 +886,9 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %files complete
 
 %changelog
+* Mon Feb 18 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.0-2
+- update to 5.18.0.240
+
 * Wed Jan 02 2019 Timotheus Pokorra <tp@tbits.net> - 5.18.0-1
 - update to 5.18.0.225
 
