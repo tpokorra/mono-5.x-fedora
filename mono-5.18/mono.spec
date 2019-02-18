@@ -2,7 +2,7 @@
 # workaround #1224945
 %undefine _hardened_build
 %endif
-%global bootstrap 1
+%global bootstrap 0
 %if 0%{?el6}
 # see https://fedorahosted.org/fpc/ticket/395, it was added to el7
 %global mono_arches %{ix86} x86_64 sparc sparcv9 ia64 %{arm} alpha s390x ppc ppc64 ppc64le
@@ -22,7 +22,7 @@
 %global xamarinrelease 240
 Name:           mono
 Version:        5.18.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Cross-platform, Open Source, .NET development framework
 
 Group:          Development/Languages
@@ -61,7 +61,7 @@ BuildRequires:  perl-Getopt-Long
 %if 0%{bootstrap}
 # for bootstrap, use bundled monolite instead of local mono
 %else
-BuildRequires:  mono-core >= 4.0
+BuildRequires:  mono-core >= 5.0
 %endif
 
 # JIT only available on these:
@@ -353,9 +353,16 @@ find . -name "*.dll" -not -path "./mcs/class/lib/monolite-linux/*" -not -path ".
 find . -name "*.exe" -not -path "./mcs/class/lib/monolite-linux/*" -not -path "./external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.8.2/*" -print -delete
 
 %if 0%{bootstrap}
-# for bootstrap, keep monolite. Mono 2.10 is too old to compile Mono 4.0
+# for bootstrap, keep some binaries (see above)
 %else
 rm -rf mcs/class/lib/monolite-linux/*
+find . -name "*.dll" -print -delete
+find . -name "*.exe" -print -delete
+# use the binaries from the currently installed mono
+cd external/binary-reference-assemblies && rm -Rf v4.7.1 && ln -s /usr/lib/mono/4.5 v4.7.1
+cd external/binary-reference-assemblies && rm -Rf v4.6 && ln -s /usr/lib/mono/4.5 v4.6
+cd external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.8.2/ && rm -Rf tools && ln -s /usr/lib/mono/4.5 tools
+
 %endif
 
 %build
@@ -886,6 +893,9 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %files complete
 
 %changelog
+* Mon Feb 18 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.0-3
+- build without bootstrap
+
 * Mon Feb 18 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.0-2
 - update to 5.18.0.240
 
