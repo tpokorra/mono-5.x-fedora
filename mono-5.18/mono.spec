@@ -40,6 +40,7 @@ Patch2:         mono-5.10.0-find-provides.patch
 Patch3:         mono-4.2-fix-winforms-trayicon.patch
 Patch4:         mono-4.6.1-aarch64.patch
 Patch5:         mono-4.8.0-aarch64-glibc-2.26.patch
+Patch6:         mono-5.18.0-roslyn-binaries.patch
 
 BuildRequires:  bison
 BuildRequires:  python
@@ -344,6 +345,7 @@ not install anything from outside the mono source (XSP, mono-basic, etc.).
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 # Remove hardcoded lib directory for libMonoPosixHelper.so from the config
 sed -i 's|$mono_libdir/||g' data/config.in
@@ -359,9 +361,9 @@ rm -rf mcs/class/lib/monolite-linux/*
 find . -name "*.dll" -print -delete
 find . -name "*.exe" -print -delete
 # use the binaries from the currently installed mono
-cd external/binary-reference-assemblies && rm -Rf v4.7.1 && ln -s /usr/lib/mono/4.5 v4.7.1
-cd external/binary-reference-assemblies && rm -Rf v4.6 && ln -s /usr/lib/mono/4.5 v4.6
-cd external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.8.2/ && rm -Rf tools && ln -s /usr/lib/mono/4.5 tools
+cd external/binary-reference-assemblies && rm -Rf v4.7.1 && ln -s /usr/lib/mono/4.5 v4.7.1 && cd -
+cd external/binary-reference-assemblies && rm -Rf v4.6 && ln -s /usr/lib/mono/4.5 v4.6 && cd -
+cd external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.8.2/ && rm -Rf tools && ln -s /usr/lib/mono/4.5 tools && cd -
 
 %endif
 
@@ -481,12 +483,12 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %{_bindir}/csc-dim
 %{_monodir}/4.5/dim/csc.*
 %{_bindir}/csi
-%{_monodir}/4.5/csi.*
+#%{_monodir}/4.5/csi.*
 %{_bindir}/mcs
 %{_monodir}/4.5/mcs.*
 %{_monodir}/4.5/mono-api-diff.*
 %{_bindir}/vbc
-%{_monodir}/4.5/vbc.*
+#%{_monodir}/4.5/vbc.*
 %mono_bin mozroots
 %mono_bin pdb2mdb
 %mono_bin setreg
@@ -600,10 +602,10 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %{_monodir}/4.5/System.Reflection.Metadata.dll*
 %{_monodir}/4.5/Microsoft.CodeAnalysis.dll*
 %{_monodir}/4.5/Microsoft.CodeAnalysis.CSharp.dll*
-%{_monodir}/4.5/Microsoft.CodeAnalysis.CSharp.Scripting.dll
-%{_monodir}/4.5/Microsoft.CodeAnalysis.Scripting.dll
-%{_monodir}/4.5/Microsoft.CodeAnalysis.VisualBasic.dll
-%{_monodir}/4.5/VBCSCompiler.exe*
+#%{_monodir}/4.5/Microsoft.CodeAnalysis.CSharp.Scripting.dll
+#%{_monodir}/4.5/Microsoft.CodeAnalysis.Scripting.dll
+#%{_monodir}/4.5/Microsoft.CodeAnalysis.VisualBasic.dll
+#%{_monodir}/4.5/VBCSCompiler.exe*
 
 %files devel
 %{_sysconfdir}/pki/mono/

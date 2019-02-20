@@ -1,0 +1,15 @@
+--- a/mcs/packages/Makefile	2019-02-20 05:21:50.491608895 +0000
++++ b/mcs/packages/Makefile	2019-02-20 05:24:54.902746690 +0000
+@@ -40,9 +40,10 @@
+ 
+ install-local: install-prototypes
+ 	$(MKINSTALLDIRS) $(TARGET_DIR)
+-	$(INSTALL_LIB) $(ROSLYN_FILES_FOR_MONO) $(TARGET_DIR)
++	# do we want prebuilt files in the Fedora package?
++	#$(INSTALL_LIB) $(ROSLYN_FILES_FOR_MONO) $(TARGET_DIR)
+ 	$(MKINSTALLDIRS) $(MSBUILD_ROSLYN_DIR)
+-	$(INSTALL_LIB) $(ROSLYN_FILES_TO_COPY_FOR_MSBUILD) $(MSBUILD_ROSLYN_DIR)
++	#$(INSTALL_LIB) $(ROSLYN_FILES_TO_COPY_FOR_MSBUILD) $(MSBUILD_ROSLYN_DIR)
+ 
+ 	(cd $(MSBUILD_ROSLYN_DIR); for asm in $(ROSLYN_FILES_FOR_MONO); do ln -fs ../../../../$(FRAMEWORK_VERSION)/$$(basename $$asm) . ; done)
+ 
