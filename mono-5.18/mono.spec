@@ -41,6 +41,7 @@ Patch3:         mono-4.2-fix-winforms-trayicon.patch
 Patch4:         mono-4.6.1-aarch64.patch
 Patch5:         mono-4.8.0-aarch64-glibc-2.26.patch
 Patch6:         mono-5.18.0-roslyn-binaries.patch
+Patch7:         mono-5.18.0-use-msc.patch
 
 BuildRequires:  bison
 BuildRequires:  python
@@ -346,6 +347,7 @@ not install anything from outside the mono source (XSP, mono-basic, etc.).
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 # Remove hardcoded lib directory for libMonoPosixHelper.so from the config
 sed -i 's|$mono_libdir/||g' data/config.in
@@ -414,6 +416,7 @@ rm -f %{buildroot}%{_monodir}/*/gmcs.exe.so
 rm -f %{buildroot}%{_monodir}/4.0/dmcs.exe.so
 rm -rf %{buildroot}%{_bindir}/mono-configuration-crypto
 rm -rf %{buildroot}%{_mandir}/man?/mono-configuration-crypto*
+rm -rf %{buildroot}%{_monodir}/4.5/*.so
 
 # remove the mono-nunit files
 rm -f %{buildroot}%{_bindir}/nunit-console
@@ -479,16 +482,13 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %mono_bin lc
 %{_bindir}/gacutil2
 %{_bindir}/csc
-%{_monodir}/4.5/csc.*
 %{_bindir}/csc-dim
 %{_monodir}/4.5/dim/csc.*
 %{_bindir}/csi
-#%{_monodir}/4.5/csi.*
 %{_bindir}/mcs
 %{_monodir}/4.5/mcs.*
 %{_monodir}/4.5/mono-api-diff.*
 %{_bindir}/vbc
-#%{_monodir}/4.5/vbc.*
 %mono_bin mozroots
 %mono_bin pdb2mdb
 %mono_bin setreg
@@ -597,15 +597,6 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %gac_dll System.Workflow.ComponentModel
 %gac_dll System.Workflow.Runtime
 %gac_dll Mono.Profiler.Log
-
-%{_monodir}/4.5/System.Collections.Immutable.dll*
-%{_monodir}/4.5/System.Reflection.Metadata.dll*
-%{_monodir}/4.5/Microsoft.CodeAnalysis.dll*
-%{_monodir}/4.5/Microsoft.CodeAnalysis.CSharp.dll*
-#%{_monodir}/4.5/Microsoft.CodeAnalysis.CSharp.Scripting.dll
-#%{_monodir}/4.5/Microsoft.CodeAnalysis.Scripting.dll
-#%{_monodir}/4.5/Microsoft.CodeAnalysis.VisualBasic.dll
-#%{_monodir}/4.5/VBCSCompiler.exe*
 
 %files devel
 %{_sysconfdir}/pki/mono/
