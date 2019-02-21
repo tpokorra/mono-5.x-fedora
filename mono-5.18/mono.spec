@@ -2,7 +2,7 @@
 # workaround #1224945
 %undefine _hardened_build
 %endif
-%global bootstrap 1
+%global bootstrap 0
 %if 0%{?el6}
 # see https://fedorahosted.org/fpc/ticket/395, it was added to el7
 %global mono_arches %{ix86} x86_64 sparc sparcv9 ia64 %{arm} alpha s390x ppc ppc64 ppc64le
@@ -22,7 +22,7 @@
 %global xamarinrelease 240
 Name:           mono
 Version:        5.18.0
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Cross-platform, Open Source, .NET development framework
 
 Group:          Development/Languages
@@ -894,6 +894,9 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %files complete
 
 %changelog
+* Thu Feb 21 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.0-5
+- build without bootstrap
+
 * Thu Feb 21 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.0-4
 - another bootstrap build
 
