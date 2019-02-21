@@ -2,7 +2,7 @@
 # workaround #1224945
 %undefine _hardened_build
 %endif
-%global bootstrap 0
+%global bootstrap 1
 %if 0%{?el6}
 # see https://fedorahosted.org/fpc/ticket/395, it was added to el7
 %global mono_arches %{ix86} x86_64 sparc sparcv9 ia64 %{arm} alpha s390x ppc ppc64 ppc64le
@@ -22,7 +22,7 @@
 %global xamarinrelease 240
 Name:           mono
 Version:        5.18.0
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Cross-platform, Open Source, .NET development framework
 
 Group:          Development/Languages
@@ -358,13 +358,12 @@ not install anything from outside the mono source (XSP, mono-basic, etc.).
 # Remove hardcoded lib directory for libMonoPosixHelper.so from the config
 sed -i 's|$mono_libdir/||g' data/config.in
 
-# Remove prebuilt binaries
-find . -name "*.dll" -not -path "./mcs/class/lib/monolite-linux/*" -not -path "./external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.8.2/*" -not -path "./external/binary-reference-assemblies/v4.7.1/System.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Core.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Web.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Xml.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Configuration.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Net.Http.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.ServiceModel.Activation.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/System.Numerics.dll" -not -path "./external/binary-reference-assemblies/v4.7.1/mscorlib.dll" -not -path "./external/binary-reference-assemblies/v4.6/mscorlib.dll" -not -path "./external/binary-reference-assemblies/v4.6/System.dll" -print -delete
-find . -name "*.exe" -not -path "./mcs/class/lib/monolite-linux/*" -not -path "./external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.8.2/*" -print -delete
-
 %if 0%{bootstrap}
-# for bootstrap, keep some binaries (see above)
+# for bootstrap, keep some binaries
+find . -name "*.dll" -not -path "./mcs/class/lib/monolite-linux/*" -not -path "./external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.8.2/*" -not -path "./external/binary-reference-assemblies/v4.7.1/*" -print -delete
+find . -name "*.exe" -not -path "./mcs/class/lib/monolite-linux/*" -not -path "./external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.8.2/*" -print -delete
 %else
+# Remove all prebuilt binaries
 rm -rf mcs/class/lib/monolite-linux/*
 find . -name "*.dll" -print -delete
 find . -name "*.exe" -print -delete
@@ -895,6 +894,9 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %files complete
 
 %changelog
+* Thu Feb 21 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.0-4
+- another bootstrap build
+
 * Mon Feb 18 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.0-3
 - build without bootstrap
 
