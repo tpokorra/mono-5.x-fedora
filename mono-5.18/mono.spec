@@ -42,6 +42,9 @@ Patch4:         mono-4.6.1-aarch64.patch
 Patch5:         mono-4.8.0-aarch64-glibc-2.26.patch
 Patch6:         mono-5.18.0-roslyn-binaries.patch
 Patch7:         mono-5.18.0-use-msc.patch
+Patch8:         mono-5.18.0-use-v471.patch
+Patch9:         mono-5.18.0-reference-assemblies-fix.patch
+Patch10:        mono-5.18.0-sharpziplib-parent-path-traversal.patch
 
 BuildRequires:  bison
 BuildRequires:  python
@@ -348,6 +351,9 @@ not install anything from outside the mono source (XSP, mono-basic, etc.).
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
 
 # Remove hardcoded lib directory for libMonoPosixHelper.so from the config
 sed -i 's|$mono_libdir/||g' data/config.in
@@ -384,6 +390,10 @@ sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
 sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
 
 make %{?_smp_mflags}
+
+# rebuild the reference assemblies
+find ./external/binary-reference-assemblies/v4.7.1/ -name \*.dll -print -delete
+BUILD_PATH=`pwd` && cd ./external/binary-reference-assemblies/ && MONO_PATH=$BUILD_PATH/mcs/class/lib/net_4_x-linux/ V=1 CSC="$BUILD_PATH/runtime/mono-wrapper $BUILD_PATH/mcs/class/lib/net_4_x-linux/mcs.exe" make
 
 %install
 make install DESTDIR=%{buildroot}
@@ -483,7 +493,6 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %{_bindir}/gacutil2
 %{_bindir}/csc
 %{_bindir}/csc-dim
-%{_monodir}/4.5/dim/csc.*
 %{_bindir}/csi
 %{_bindir}/mcs
 %{_monodir}/4.5/mcs.*
