@@ -312,7 +312,6 @@ Requires:       mono-devel = %{version}
 Requires:       mono-extras = %{version}
 Requires:       mono-locale-extras = %{version}
 Requires:       mono-mvc = %{version}
-Requires:       mono-nunit = %{version}
 Requires:       mono-reactive = %{version}
 Requires:       mono-wcf = %{version}
 Requires:       mono-web = %{version}
@@ -368,10 +367,7 @@ rm -rf mcs/class/lib/monolite-linux/*
 find . -name "*.dll" -print -delete
 find . -name "*.exe" -print -delete
 # use the binaries from the currently installed mono
-cd external/binary-reference-assemblies && rm -Rf v4.7.1 && ln -s /usr/lib/mono/4.5 v4.7.1 && cd -
-cd external/binary-reference-assemblies && rm -Rf v4.6 && ln -s /usr/lib/mono/4.5 v4.6 && cd -
-cd external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.8.2/ && rm -Rf tools && ln -s /usr/lib/mono/4.5 tools && cd -
-
+cd external/binary-reference-assemblies && mv v4.7.1 v4.7.1.tobuild && ln -s /usr/lib/mono/4.7.1-api v4.7.1 && cd -
 %endif
 
 %build
@@ -383,6 +379,8 @@ export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing"
 
 %configure --disable-rpath \
            --with-csc=mcs \
+#           --disable-system-aot \
+#           --disable-quiet-build \
            --with-moonlight=no
 
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
@@ -391,8 +389,9 @@ sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
 make %{?_smp_mflags}
 
 # rebuild the reference assemblies
+cd external/binary-reference-assemblies && rm -f v4.7.1 && mv v4.7.1.tobuild v4.7.1 && cd -
 find ./external/binary-reference-assemblies/v4.7.1/ -name \*.dll -print -delete
-BUILD_PATH=`pwd` && cd ./external/binary-reference-assemblies/ && MONO_PATH=$BUILD_PATH/mcs/class/lib/net_4_x-linux/ V=1 CSC="$BUILD_PATH/runtime/mono-wrapper $BUILD_PATH/mcs/class/lib/net_4_x-linux/mcs.exe" make
+BUILD_PATH=`pwd` && cd ./external/binary-reference-assemblies/ && MONO_PATH=$BUILD_PATH/mcs/class/lib/net_4_x-linux/ V=1 CSC="$BUILD_PATH/runtime/mono-wrapper $BUILD_PATH/mcs/class/lib/net_4_x-linux/mcs.exe" make -C v4.7.1
 
 %install
 make install DESTDIR=%{buildroot}
@@ -400,6 +399,10 @@ make install DESTDIR=%{buildroot}
 # copy the mono.snk key into /etc/pki/mono
 mkdir -p %{buildroot}%{_sysconfdir}/pki/mono
 install -p -m0644 %{SOURCE1} %{buildroot}%{_sysconfdir}/pki/mono/
+
+# install the newly built reference assembly dlls
+mkdir -p %{buildroot}%{_monodir}/4.7.1-api
+cp external/binary-reference-assemblies/v4.7.1/*.dll %{buildroot}%{_monodir}/4.7.1-api
 
 # This was removed upstream:
 # remove .la files (they are generally bad news)
@@ -697,6 +700,7 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %gac_dll Mono.XBuild.Tasks
 %gac_dll System.Windows
 %gac_dll System.Xml.Serialization
+%{_monodir}/4.7.1-api/
 %{_monodir}/4.5/Microsoft.Common.tasks
 %{_monodir}/4.5/MSBuild/Microsoft.Build*
 %{_monodir}/4.5/Microsoft.Build.xsd
@@ -894,8 +898,8 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %files complete
 
 %changelog
-* Thu Feb 21 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.0-5
-- build without bootstrap
+* Thu Feb 25 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.0-5
+- another bootstrap build
 
 * Thu Feb 21 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.0-4
 - another bootstrap build
