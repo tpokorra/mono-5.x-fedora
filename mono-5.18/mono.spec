@@ -898,7 +898,7 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %files complete
 
 %changelog
-* Thu Feb 25 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.0-5
+* Mon Feb 25 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.0-5
 - another bootstrap build
 
 * Thu Feb 21 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.0-4
