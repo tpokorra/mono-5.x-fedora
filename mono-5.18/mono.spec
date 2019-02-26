@@ -387,7 +387,7 @@ sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
 make %{?_smp_mflags}
 
 # rebuild the reference assemblies
-cd external/binary-reference-assemblies && rm -f v4.7.1 && mv v4.7.1.tobuild v4.7.1 && cd -
+cd external/binary-reference-assemblies && if [ -d v4.7.1.tobuild ]; then rm -f v4.7.1 && mv v4.7.1.tobuild v4.7.1; fi && cd -
 find ./external/binary-reference-assemblies/v4.7.1/ -name \*.dll -print -delete
 BUILD_PATH=`pwd` && cd ./external/binary-reference-assemblies/ && MONO_PATH=$BUILD_PATH/mcs/class/lib/net_4_x-linux/ V=1 CSC="$BUILD_PATH/runtime/mono-wrapper $BUILD_PATH/mcs/class/lib/net_4_x-linux/mcs.exe" make -C v4.7.1
 
