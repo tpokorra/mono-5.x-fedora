@@ -379,6 +379,7 @@ export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing"
 
 %configure --disable-rpath \
            --with-csc=mcs \
+           --disable-system-aot \
            --with-moonlight=no
 
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
