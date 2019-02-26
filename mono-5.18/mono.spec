@@ -2,7 +2,7 @@
 # workaround #1224945
 %undefine _hardened_build
 %endif
-%global bootstrap 0
+%global bootstrap 1
 %if 0%{?el6}
 # see https://fedorahosted.org/fpc/ticket/395, it was added to el7
 %global mono_arches %{ix86} x86_64 sparc sparcv9 ia64 %{arm} alpha s390x ppc ppc64 ppc64le
@@ -22,7 +22,7 @@
 %global xamarinrelease 240
 Name:           mono
 Version:        5.18.0
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Cross-platform, Open Source, .NET development framework
 
 Group:          Development/Languages
@@ -64,7 +64,7 @@ BuildRequires:  perl-Getopt-Long
 # and don't delete the binaries in %%prep.
 
 %if 0%{bootstrap}
-# for bootstrap, use bundled monolite instead of local mono
+# for bootstrap, use bundled monolite and reference assemblies instead of local mono
 %else
 BuildRequires:  mono-core >= 5.0
 %endif
@@ -359,8 +359,8 @@ sed -i 's|$mono_libdir/||g' data/config.in
 
 %if 0%{bootstrap}
 # for bootstrap, keep some binaries
-find . -name "*.dll" -not -path "./mcs/class/lib/monolite-linux/*" -not -path "./external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.8.2/*" -not -path "./external/binary-reference-assemblies/v4.7.1/*" -print -delete
-find . -name "*.exe" -not -path "./mcs/class/lib/monolite-linux/*" -not -path "./external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.8.2/*" -print -delete
+find . -name "*.dll" -not -path "./mcs/class/lib/monolite-linux/*" -not -path "./external/binary-reference-assemblies/v4.7.1/*" -print -delete
+find . -name "*.exe" -not -path "./mcs/class/lib/monolite-linux/*" -print -delete
 %else
 # Remove all prebuilt binaries
 rm -rf mcs/class/lib/monolite-linux/*
@@ -897,6 +897,9 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %files complete
 
 %changelog
+* Tue Feb 26 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.0-7
+- another bootstrap build
+
 * Tue Feb 26 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.0-6
 - build without bootstrap
 
