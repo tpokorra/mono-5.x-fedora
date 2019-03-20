@@ -440,6 +440,10 @@ rm -f %{buildroot}%{_libdir}/pkgconfig/mono-nunit.pc
 # remove dmcs because it requires the .net 4.0 sdk but we only deliver 4.5 with Fedora (#1294967)
 rm -f %{buildroot}%{_bindir}/dmcs
 
+# remove csc
+rm -f %{buildroot}%{_bindir}/csc
+rm -f %{buildroot}%{_bindir}/csc-dim
+
 # drop prj2make because the binary is not built anymore
 rm -f %{buildroot}%{_bindir}/prj2make
 rm -f %{buildroot}%{_mandir}/man1/prj2make*
