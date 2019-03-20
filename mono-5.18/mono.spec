@@ -22,7 +22,7 @@
 %global xamarinrelease 0
 Name:           mono
 Version:        5.18.1
-Release:        0%{?dist}
+Release:        1%{?dist}
 Summary:        Cross-platform, Open Source, .NET development framework
 
 Group:          Development/Languages
@@ -457,14 +457,10 @@ rm -rf %{buildroot}/usr/lib/mono/msbuild
 
 %find_lang mcs
 
-%post -p /sbin/ldconfig
+%ldconfig_scriptlets
+
+%post
 cert-sync /etc/pki/tls/certs/ca-bundle.crt
-
-%postun -p /sbin/ldconfig
-
-%post devel -p /sbin/ldconfig
-
-%postun devel -p /sbin/ldconfig
 
 %files core -f mcs.lang
 %license COPYING.LIB
@@ -897,6 +893,9 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %files complete
 
 %changelog
+* Wed Mar 20 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.1-1
+- clean up ldconfig and post
+
 * Fri Mar 15 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.1-0
 - upgrade to Mono 5.18.1.0
 
