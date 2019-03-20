@@ -488,8 +488,6 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %mono_bin ikdasm
 %mono_bin lc
 %{_bindir}/gacutil2
-%{_bindir}/csc
-%{_bindir}/csc-dim
 %{_bindir}/csi
 %{_bindir}/mcs
 %{_monodir}/4.5/mcs.*
@@ -895,6 +893,7 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %changelog
 * Wed Mar 20 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.1-1
 - clean up ldconfig and post
+- drop csc script since we don't deliver csc.exe anyway
 
 * Fri Mar 15 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.1-0
 - upgrade to Mono 5.18.1.0
