@@ -457,10 +457,11 @@ rm -rf %{buildroot}/usr/lib/mono/msbuild
 
 %find_lang mcs
 
-%ldconfig_scriptlets
-
 %post
+%{?ldconfig}
 cert-sync /etc/pki/tls/certs/ca-bundle.crt
+
+%ldconfig_postun
 
 %files core -f mcs.lang
 %license COPYING.LIB
