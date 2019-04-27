@@ -2,7 +2,7 @@
 # workaround https://github.com/mono/mono/issues/9009#issuecomment-477073609
 %undefine _hardened_build
 %endif
-%global bootstrap 0
+%global bootstrap 1
 %if 0%{?el6}
 # see https://fedorahosted.org/fpc/ticket/395, it was added to el7
 %global mono_arches %{ix86} x86_64 sparc sparcv9 ia64 %{arm} alpha s390x ppc ppc64 ppc64le
@@ -20,10 +20,10 @@
 %undefine _missing_build_ids_terminate_build
 %endif
 
-%global xamarinrelease 3
+%global xamarinrelease 27
 Name:           mono
-Version:        5.18.1
-Release:        3%{?dist}
+Version:        5.20.1
+Release:        1%{?dist}
 Summary:        Cross-platform, Open Source, .NET development framework
 
 License:        MIT
@@ -444,6 +444,8 @@ rm -rf %{buildroot}/usr/lib/mono/msbuild
 
 # we have btls debug files
 rm -rf %{buildroot}/usr/lib/debug/usr/lib64/libmono-btls-shared.so-*.debug
+# drop other debug files as well
+rm -rf %{buildroot}/usr/lib/debug/usr/lib64/libmono-native.so*.debug
 
 %find_lang mcs
 
@@ -504,7 +506,7 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %{_mandir}/man1/lc.1.gz
 %{_mandir}/man1/mprof-report.1.gz
 %{_libdir}/libMonoPosixHelper.so*
-%{_libdir}/libmono-system-native.so*
+%{_libdir}/libmono-native.so*
 %dir %{_monodir}
 %dir %{_monodir}/4.5
 %dir %{_monodir}/4.5/Facades
@@ -879,6 +881,9 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %files complete
 
 %changelog
+* Fri Apr 26 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.20.1-1
+- upgrade to Mono 5.20.1.27
+
 * Thu Apr 18 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.1-3
 - upgrade to Mono 5.18.1.3
 - fix typo for mcs in Microsoft.Build.Tasks patch
