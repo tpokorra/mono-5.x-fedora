@@ -1,8 +1,8 @@
-%ifarch ppc64 ppc64le
-# workaround #1224945
+%ifarch s390x
+# workaround https://github.com/mono/mono/issues/9009#issuecomment-477073609
 %undefine _hardened_build
 %endif
-%global bootstrap 1
+%global bootstrap 0
 %if 0%{?el6}
 # see https://fedorahosted.org/fpc/ticket/395, it was added to el7
 %global mono_arches %{ix86} x86_64 sparc sparcv9 ia64 %{arm} alpha s390x ppc ppc64 ppc64le
@@ -19,13 +19,13 @@
 # to resolve: "ERROR: No build ID note found"
 %undefine _missing_build_ids_terminate_build
 %endif
-%global xamarinrelease 27
+
+%global xamarinrelease 3
 Name:           mono
-Version:        5.20.1
-Release:        1%{?dist}
+Version:        5.18.1
+Release:        3%{?dist}
 Summary:        Cross-platform, Open Source, .NET development framework
 
-Group:          Development/Languages
 License:        MIT
 URL:            http://www.mono-project.com
 Source0:        http://download.mono-project.com/sources/mono/mono-%{version}.%{xamarinrelease}.tar.bz2
@@ -39,15 +39,17 @@ Patch1:         mono-4.2.1-ppc.patch
 Patch2:         mono-5.10.0-find-provides.patch
 Patch3:         mono-4.2-fix-winforms-trayicon.patch
 Patch4:         mono-4.6.1-aarch64.patch
-Patch5:         mono-4.8.0-aarch64-glibc-2.26.patch
+Patch5:         mono-5.18.1-s390x-ucontext.patch
 Patch6:         mono-5.18.0-roslyn-binaries.patch
 Patch7:         mono-5.18.0-use-mcs.patch
 Patch8:         mono-5.18.0-use-v471.patch
 Patch9:         mono-5.18.0-reference-assemblies-fix.patch
 Patch10:        mono-5.18.0-sharpziplib-parent-path-traversal.patch
+Patch11:        mono-5.18.1-python3.patch
+Patch12:        mono-5.18.1-s390x-build.patch
 
 BuildRequires:  bison
-BuildRequires:  python
+BuildRequires:  python%{python3_pkgversion}
 BuildRequires:  cmake
 BuildRequires:  gcc-c++
 BuildRequires:  gettext-devel
@@ -84,7 +86,6 @@ metadata access libraries.
 
 %package core
 Summary:        The Mono CIL runtime, suitable for running .NET code
-Group:          Development/Languages
 Requires:       libgdiplus
 #dependency requiered for install
 Provides:       mono(System.Collections.Immutable) = 1.2.0.0
@@ -122,7 +123,6 @@ I18N, Cairo and Mono.*).
 
 %package winfx
 Summary:        Mono implementation of core WinFX APIs
-Group:          Development/Languages
 Requires:       mono-core = %{version}-%{release}
 
 %description winfx
@@ -130,7 +130,6 @@ Open source implementation of core WinFX APIs
 
 %package mvc
 Summary:        Mono implementation of ASP.NET MVC
-Group:          Development/Languages
 Requires:       mono-core = %{version}-%{release}
 
 %description mvc
@@ -138,7 +137,6 @@ This is the Mono implementation of ASP.NET MVC
 
 %package mvc-devel
 Summary:        Development files for  ASP.NET MVC
-Group:          Development/Languages
 Requires:       mono-core = %{version}-%{release}
 
 %description mvc-devel
@@ -146,7 +144,6 @@ This is the Mono implementation of ASP.NET MVC
 
 %package devel
 Summary:        Development tools for Mono
-Group:          Development/Languages
 Requires:       mono-core = %{version}-%{release}
 Requires:       pkgconfig
 Requires:       glib2-devel
@@ -157,7 +154,6 @@ assembler and other various tools.
 
 %package locale-extras
 Summary:        Extra locale information for Mono
-Group:          Development/Languages
 Requires:       mono-core = %{version}-%{release}
 
 %description locale-extras
@@ -166,7 +162,6 @@ non-latin alphabets.
 
 %package extras
 Summary:        Provides the infrastructure for running and building daemons and services with Mono as well as various stub assemblies
-Group:          Development/Languages
 Requires:       mono-core = %{version}-%{release}
 
 %description extras
@@ -178,7 +173,6 @@ System.Configuration.Install, System.Management, System.Messaging.
 %package reactive
 License:        MIT License (or similar) ; Apache License 2.0
 Summary:        Reactive Extensions for Mono core libraries
-Group:          Development/Languages
 Requires:       mono-core = %{version}-%{release}
 
 %description reactive
@@ -188,7 +182,6 @@ desktop-specific features.
 %package reactive-winforms
 License:        MIT License (or similar) ; Apache License 2.0
 Summary:        Reactive Extensions for Mono desktop-specific libraries
-Group:          Development/Languages
 Requires:       mono-core = %{version}-%{release}
 Requires:       mono-reactive = %{version}-%{release}
 
@@ -198,7 +191,6 @@ windows threading).
 
 %package reactive-devel
 Summary:        Development files for system.web
-Group:          Development/Languages
 Requires:       mono-core = %{version}-%{release}
 Requires:       mono-reactive = %{version}-%{release} pkgconfig
 
@@ -207,7 +199,6 @@ This package provides the .pc file for mono-rx
 
 %package winforms
 Summary:        Windows Forms implementation for Mono
-Group:          Development/Languages
 Requires:       mono-core = %{version}-%{release}
 
 %description winforms
@@ -217,7 +208,6 @@ applications.
 
 %package wcf
 Summary:        Mono implementation of Windows Communication Foundation
-Group:          Development/Languages
 Requires:       mono-core = %{version}-%{release}
 
 %description wcf
@@ -226,7 +216,6 @@ Foundation.
 
 %package web
 Summary:        ASP.NET, Remoting, and Web Services for Mono
-Group:          Development/Languages
 Requires:       mono-core = %{version}-%{release}
 
 %description web
@@ -235,7 +224,6 @@ development of web application, web services and remoting support.
 
 %package web-devel
 Summary:        Development files for system.web
-Group:          Development/Languages
 Requires:       mono-core = %{version}-%{release}
 Requires:       mono-web = %{version}-%{release} pkgconfig
 
@@ -244,7 +232,6 @@ This package provides the .pc file for mono-web
 
 %package data
 Summary:        Database connectivity for Mono
-Group:          Development/Languages
 Requires:       mono-core = %{version}-%{release}
 
 %description data
@@ -257,7 +244,6 @@ data providers.
 
 %package data-sqlite
 Summary:        sqlite database connectivity for Mono
-Group:          Development/Languages
 Requires:       mono-core = %{version}-%{release}
 Requires:       sqlite
 
@@ -267,7 +253,6 @@ database.
 
 %package data-oracle
 Summary:        Oracle database connectivity for Mono
-Group:          Development/Languages
 Requires:       mono-core = %{version}-%{release}
 
 %description data-oracle
@@ -276,7 +261,6 @@ database.
 
 %package -n ibm-data-db2
 Summary:        IBM DB2 database connectivity for Mono
-Group:          Development/Languages
 Requires:       mono-core = %{version}-%{release}
 
 %description -n ibm-data-db2
@@ -285,7 +269,6 @@ Universal database.
 
 %package -n monodoc
 Summary:        The mono documentation system
-Group:          Documentation
 Requires:       mono-core = %{version}-%{release}
 
 %description -n monodoc
@@ -293,7 +276,6 @@ monodoc is the documentation package for the mono .NET environment
 
 %package -n monodoc-devel
 Summary:        .pc file for monodoc
-Group:          Documentation
 Requires:       monodoc = %{version}-%{release} pkgconfig
 Requires:       mono-core = %{version}-%{release}
 
@@ -302,7 +284,6 @@ Development file for monodoc
 
 %package complete
 Summary:        Install everything built from the mono source tree
-Group:          Development/Languages
 Requires:       ibm-data-db2 = %{version}
 Requires:       mono-core = %{version}
 Requires:       mono-data = %{version}
@@ -341,7 +322,7 @@ not install anything from outside the mono source (XSP, mono-basic, etc.).
 %setup -q -n %{name}-%{version}.%{xamarinrelease}
 
 %patch0 -p1
-%ifarch ppc ppc64 ppc64le
+%ifarch ppc ppc64 ppc64le s390x
 %patch1 -p1
 %endif
 %patch2 -p1
@@ -353,6 +334,8 @@ not install anything from outside the mono source (XSP, mono-basic, etc.).
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
+%patch12 -p1
 
 # Remove hardcoded lib directory for libMonoPosixHelper.so from the config
 sed -i 's|$mono_libdir/||g' data/config.in
@@ -372,8 +355,8 @@ cd external/binary-reference-assemblies && mv v4.7.1 v4.7.1.tobuild && ln -s /us
 
 %build
 %ifarch s390x
-# workaround a gcc bug - https://bugzilla.redhat.com/show_bug.cgi?id=1397948
-RPM_OPT_FLAGS=$(echo $RPM_OPT_FLAGS | sed -e 's/-march=z[[:alnum:]]\+/-march=z9-109/g' -e 's/-mtune=z[[:alnum:]]\+/-mtune=z10/g')
+# either mono C code relies on undefined behaviour or gcc is even more broken than earlier
+RPM_OPT_FLAGS=$(echo $RPM_OPT_FLAGS | sed -e 's/-O2 /-O1 /g')
 %endif
 export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing"
 
@@ -459,13 +442,8 @@ rm -f %{buildroot}%{_libdir}/pkgconfig/cecil.pc
 # remove msbuild / microsoft binary files
 rm -rf %{buildroot}/usr/lib/mono/msbuild
 
-# remove msbuild / microsoft binary files
-rm -rf %{buildroot}/usr/lib/mono/msbuild
-
 # we have btls debug files
-rm -rf %{buildroot}/usr/lib/debug/usr/lib64/libmono-btls-shared.so-*.deb
-# drop other debug files as well
-rm -rf %{buildroot}/usr/lib/debug/usr/lib64/libmono-native.so*.debug
+rm -rf %{buildroot}/usr/lib/debug/usr/lib64/libmono-btls-shared.so-*.debug
 
 %find_lang mcs
 
@@ -526,7 +504,7 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %{_mandir}/man1/lc.1.gz
 %{_mandir}/man1/mprof-report.1.gz
 %{_libdir}/libMonoPosixHelper.so*
-%{_libdir}/libmono-native.so*
+%{_libdir}/libmono-system-native.so*
 %dir %{_monodir}
 %dir %{_monodir}/4.5
 %dir %{_monodir}/4.5/Facades
@@ -586,11 +564,8 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %gac_dll System.Transactions
 %gac_dll System.Xaml
 %gac_dll WebMatrix.Data
-%ifarch %{ix86} x86_64
-# there is no btls for non-x86
 %gac_dll Mono.Btls.Interface
 %{_libdir}/libmono-btls-shared.so
-%endif
 %gac_dll Mono.CodeContracts
 %dir %{_monodir}/mono-configuration-crypto
 %dir %{_monodir}/mono-configuration-crypto/4.5
@@ -904,66 +879,33 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %files complete
 
 %changelog
-* Fri Apr 26 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.20.1-1
-- fix for mcs call
-- upgrade to Mono 5.20.1.27
+* Thu Apr 18 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.1-3
+- upgrade to Mono 5.18.1.3
+- fix typo for mcs in Microsoft.Build.Tasks patch
 
-* Wed Mar 20 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.1-1
-- clean up ldconfig and post
-- drop csc script since we don't deliver csc.exe anyway
+* Wed Mar 27 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.1-2
+- disable bootstrapping
 
-* Fri Mar 15 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.1-0
+* Fri Mar 22 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.1-1
+- enable bootstrap build
+
+* Thu Mar 21 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.1-0
 - upgrade to Mono 5.18.1.0
 
-* Thu Feb 28 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.0-9
-- upgrade to Mono 5.18.0.268
+* Mon Feb 11 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 4.8.0-17
+- fixes to resolve FTBFS: python shebang
+- disable build for ppc64le due to bug 1588734
 
-* Tue Feb 26 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.0-8
-- another build without bootstrap
+* Fri Feb 01 2019 Fedora Release Engineering <releng@fedoraproject.org> - 4.8.0-16
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 
-* Tue Feb 26 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.0-7
-- another bootstrap build
+* Fri Jul 13 2018 Fedora Release Engineering <releng@fedoraproject.org> - 4.8.0-15
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 
-* Tue Feb 26 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.0-6
-- build without bootstrap
-
-* Mon Feb 25 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.0-5
-- another bootstrap build
-
-* Thu Feb 21 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.0-4
-- another bootstrap build
-
-* Mon Feb 18 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.0-3
-- build without bootstrap
-
-* Mon Feb 18 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.0-2
-- update to 5.18.0.240
-
-* Wed Jan 02 2019 Timotheus Pokorra <tp@tbits.net> - 5.18.0-1
-- update to 5.18.0.225
-
-* Tue Oct 16 2018 Timotheus Pokorra <tp@tbits.net> - 5.16.0-1
-- update to 5.16.0.179
-
-* Thu Aug 16 2018 Timotheus Pokorra <tp@tbits.net> - 5.14.0-1
-- update to 5.14.0.177
-
-* Sat Jun 16 2018 Timotheus Pokorra <tp@tbits.net> - 5.12.0-1
-- update to 5.12.0.226
-
-* Wed Mar 28 2018 Claudio Rodrigo Pereyra Diaz <elsupergomez@fedoraproject.org> - 5.10.1-2
-- update to 5.10.1.32
-- remove mono-4.8.0.520-glibc-ucontext.patch applied upstream
-- remove mono-4.6.0-patch_arm_fast_tls.patch applied upstream
-
-* Wed Mar 28 2018 Claudio Rodrigo Pereyra Diaz <elsupergomez@fedoraproject.org> - 5.10.1-1
-- update to 5.10.1.20
-
-* Thu Mar 08 2018 Claudio Rodrigo Pereyra Diaz <elsupergomez@fedoraproject.org> - 5.10.0-1
-- update to 5.10.0.179
-- conditionalize ppc patch1
-- add metapackage mono-complete
-- adapt patches for 5.10
+* Tue Jun 05 2018 Timotheus Pokorra <tp@tbits.net> - 4.8.0-14
+- backport a patch for new file format terminfo2 introduced with ncurses6.1
+- dropping patch for glibc on aarch64 because it now breaks the build on Fedora 28
+- adding patch for glibc change regarding sysmacros, for Fedora 29
 
 * Thu Feb 08 2018 Fedora Release Engineering <releng@fedoraproject.org> - 4.8.0-13
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
@@ -1893,4 +1835,3 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 
 * Tue Nov 15 2005 Alexander Larsson <alexl@redhat.com> - 1.1.10-1
 - Initial version
-
