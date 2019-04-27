@@ -2,7 +2,7 @@
 # workaround #1224945
 %undefine _hardened_build
 %endif
-%global bootstrap 0
+%global bootstrap 1
 %if 0%{?el6}
 # see https://fedorahosted.org/fpc/ticket/395, it was added to el7
 %global mono_arches %{ix86} x86_64 sparc sparcv9 ia64 %{arm} alpha s390x ppc ppc64 ppc64le
@@ -19,9 +19,9 @@
 # to resolve: "ERROR: No build ID note found"
 %undefine _missing_build_ids_terminate_build
 %endif
-%global xamarinrelease 0
+%global xamarinrelease 27
 Name:           mono
-Version:        5.18.1
+Version:        5.20.1
 Release:        1%{?dist}
 Summary:        Cross-platform, Open Source, .NET development framework
 
@@ -41,7 +41,7 @@ Patch3:         mono-4.2-fix-winforms-trayicon.patch
 Patch4:         mono-4.6.1-aarch64.patch
 Patch5:         mono-4.8.0-aarch64-glibc-2.26.patch
 Patch6:         mono-5.18.0-roslyn-binaries.patch
-Patch7:         mono-5.18.0-use-msc.patch
+Patch7:         mono-5.18.0-use-mcs.patch
 Patch8:         mono-5.18.0-use-v471.patch
 Patch9:         mono-5.18.0-reference-assemblies-fix.patch
 Patch10:        mono-5.18.0-sharpziplib-parent-path-traversal.patch
@@ -459,6 +459,14 @@ rm -f %{buildroot}%{_libdir}/pkgconfig/cecil.pc
 # remove msbuild / microsoft binary files
 rm -rf %{buildroot}/usr/lib/mono/msbuild
 
+# remove msbuild / microsoft binary files
+rm -rf %{buildroot}/usr/lib/mono/msbuild
+
+# we have btls debug files
+rm -rf %{buildroot}/usr/lib/debug/usr/lib64/libmono-btls-shared.so-*.deb
+# drop other debug files as well
+rm -rf %{buildroot}/usr/lib/debug/usr/lib64/libmono-native.so*.debug
+
 %find_lang mcs
 
 %post
@@ -518,7 +526,7 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %{_mandir}/man1/lc.1.gz
 %{_mandir}/man1/mprof-report.1.gz
 %{_libdir}/libMonoPosixHelper.so*
-%{_libdir}/libmono-system-native.so*
+%{_libdir}/libmono-native.so*
 %dir %{_monodir}
 %dir %{_monodir}/4.5
 %dir %{_monodir}/4.5/Facades
@@ -896,6 +904,10 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %files complete
 
 %changelog
+* Fri Apr 26 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.20.1-1
+- fix for mcs call
+- upgrade to Mono 5.20.1.27
+
 * Wed Mar 20 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.1-1
 - clean up ldconfig and post
 - drop csc script since we don't deliver csc.exe anyway
