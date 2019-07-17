@@ -20,10 +20,10 @@
 %undefine _missing_build_ids_terminate_build
 %endif
 
-%global xamarinrelease 27
+%global xamarinrelease 34
 Name:           mono
 Version:        5.20.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Cross-platform, Open Source, .NET development framework
 
 License:        MIT
@@ -877,6 +877,9 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %files complete
 
 %changelog
+* Wed Jul 17 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.20.1-2
+- upgrade to Mono 5.20.1.34
+
 * Fri Apr 26 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.20.1-1
 - upgrade to Mono 5.20.1.27
 
