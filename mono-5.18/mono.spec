@@ -20,10 +20,10 @@
 %undefine _missing_build_ids_terminate_build
 %endif
 
-%global xamarinrelease 3
+%global xamarinrelease 28
 Name:           mono
 Version:        5.18.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Cross-platform, Open Source, .NET development framework
 
 License:        MIT
@@ -879,6 +879,9 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %files complete
 
 %changelog
+* Wed Jul 17 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.1-4
+- upgrade to Mono 5.18.1.28
+
 * Thu Apr 18 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.1-3
 - upgrade to Mono 5.18.1.3
 - fix typo for mcs in Microsoft.Build.Tasks patch
