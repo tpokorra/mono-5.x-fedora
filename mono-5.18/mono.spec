@@ -2,7 +2,7 @@
 # workaround https://github.com/mono/mono/issues/9009#issuecomment-477073609
 %undefine _hardened_build
 %endif
-%global bootstrap 0
+%global bootstrap 1
 %if 0%{?el6}
 # see https://fedorahosted.org/fpc/ticket/395, it was added to el7
 %global mono_arches %{ix86} x86_64 sparc sparcv9 ia64 %{arm} alpha s390x ppc ppc64 ppc64le
@@ -47,6 +47,7 @@ Patch9:         mono-5.18.0-reference-assemblies-fix.patch
 Patch10:        mono-5.18.0-sharpziplib-parent-path-traversal.patch
 Patch11:        mono-5.18.1-python3.patch
 Patch12:        mono-5.18.1-s390x-build.patch
+Patch13:        mono-5.18.0-largearraybuilder.patch
 
 BuildRequires:  bison
 BuildRequires:  python%{python3_pkgversion}
@@ -69,13 +70,14 @@ BuildRequires:  perl-Getopt-Long
 # for bootstrap, use bundled monolite and reference assemblies instead of local mono
 %else
 BuildRequires:  mono-core >= 5.0
+BuildRequires:  mono-devel >= 5.0
 %endif
 
 # JIT only available on these:
 ExclusiveArch: %mono_arches
 
 %global _use_internal_dependency_generator 0
-%global __find_provides env sh -c 'filelist=($(cat)) && { printf "%s\\n" "${filelist[@]}" | /usr/lib/rpm/redhat/find-provides && printf "%s\\n" "${filelist[@]}" | prefix=%{buildroot}%{_prefix} %{buildroot}%{_bindir}/mono-find-provides; } | sort | uniq'
+%global __find_provides env sh -c 'filelist=($(cat)) && { printf "%s\\n" "${filelist[@]}" | grep -v 4.7.1-api | grep -v 4.5-api| /usr/lib/rpm/redhat/find-provides && printf "%s\\n" "${filelist[@]}" | grep -v 4.7.1-api | grep -v 4.5-api | prefix=%{buildroot}%{_prefix} %{buildroot}%{_bindir}/mono-find-provides; } | sort | uniq'
 %global __find_requires env sh -c 'filelist=($(cat)) && { printf "%s\\n" "${filelist[@]}" | /usr/lib/rpm/redhat/find-requires && printf "%s\\n" "${filelist[@]}" | prefix=%{buildroot}%{_prefix} %{buildroot}%{_bindir}/mono-find-requires; } | sort | uniq | grep ^...'
 
 %description
@@ -336,6 +338,7 @@ not install anything from outside the mono source (XSP, mono-basic, etc.).
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
+%patch13 -p1
 
 # Remove hardcoded lib directory for libMonoPosixHelper.so from the config
 sed -i 's|$mono_libdir/||g' data/config.in
@@ -444,6 +447,11 @@ rm -rf %{buildroot}/usr/lib/mono/msbuild
 
 # we have btls debug files
 rm -rf %{buildroot}/usr/lib/debug/usr/lib64/libmono-btls-shared.so-*.debug
+
+# create a symbolic link so that Fedora packages targetting Framework 4.5 will still build
+cd %{buildroot}/usr/lib/mono && ln -s 4.7.1-api 4.5-api && cd -
+# as requested in bug 1704861; we have had that link in F29 with Mono 4.8 as well.
+cd %{buildroot}/usr/lib/mono && ln -s 4.7.1-api 4.0-api && cd -
 
 %find_lang mcs
 
@@ -682,6 +690,8 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %gac_dll System.Windows
 %gac_dll System.Xml.Serialization
 %{_monodir}/4.7.1-api/
+%{_monodir}/4.5-api
+%{_monodir}/4.0-api
 %{_monodir}/4.5/Microsoft.Common.tasks
 %{_monodir}/4.5/MSBuild/Microsoft.Build*
 %{_monodir}/4.5/Microsoft.Build.xsd
@@ -881,6 +891,10 @@ cert-sync /etc/pki/tls/certs/ca-bundle.crt
 %changelog
 * Wed Jul 17 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.1-4
 - upgrade to Mono 5.18.1.28
+- adding link 4.0-api, fixes bug 1704861
+- backport a fix for LargeArrayBuilder, fixes bug 1704847
+- mono-devel should not provide for namespaces in the reference assemblies. fixes bug 1704560
+- add symbolic link from /usr/lib/mono/4.5-api to 4.7.1-api to fix build issues for other packages depending on Mono
 
 * Thu Apr 18 2019 Timotheus Pokorra <timotheus.pokorra@solidcharity.com> - 5.18.1-3
 - upgrade to Mono 5.18.1.3
